@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "Graduate Employment Tracker",
+    "tagline": "Connecting graduates with opportunities"
+  },
+  "nav": {
+    "home": "Home",
+    "login": "Log In",
+    "register": "Register",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "vacancies": "Vacancies",
+    "graduates": "Graduates",
+    "employers": "Employers",
+    "logout": "Log Out"
+  },
+  "auth": {
+    "login": "Log In",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "role": "I am a",
+    "graduate": "Graduate",
+    "employer": "Employer"
+  },
+  "home": {
+    "heroTitle": "Track Your Career Journey",
+    "heroSubtitle": "The Polytechnic University Graduate Employment System",
+    "statsTitle": "Our Statistics",
+    "employmentRate": "Employment Rate",
+    "totalGraduates": "Total Graduates",
+    "partnerCompanies": "Partner Companies"
+  },
+  "graduate": {
+    "profile": "My Profile",
+    "resume": "My Resume",
+    "employmentStatus": "Employment Status",
+    "employed": "Employed",
+    "unemployed": "Unemployed",
+    "company": "Company",
+    "position": "Position",
+    "salary": "Salary",
+    "startDate": "Start Date",
+    "uploadResume": "Upload Resume",
+    "updateProfile": "Update Profile"
+  },
+  "employer": {
+    "dashboard": "Dashboard",
+    "vacancies": "My Vacancies",
+    "addVacancy": "Add Vacancy",
+    "title": "Job Title",
+    "description": "Description",
+    "requirements": "Requirements",
+    "location": "Location",
+    "salary": "Salary",
+    "applications": "Applications",
+    "company": "Company Information"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "graduatesManagement": "Graduates Management",
+    "employersManagement": "Employers Management",
+    "statistics": "Statistics",
+    "yearFilter": "Filter by Year",
+    "exportData": "Export Data",
+    "approveEmployers": "Approve Employers"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "noResults": "No results found",
+    "loading": "Loading...",
+    "success": "Success!",
+    "error": "Error!",
+    "required": "Required field",
+    "invalidEmail": "Invalid email address"
+  }
+}

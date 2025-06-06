@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "Система учета трудоустройства выпускников",
+    "tagline": "Связываем выпускников с возможностями"
+  },
+  "nav": {
+    "home": "Главная",
+    "login": "Вход",
+    "register": "Регистрация",
+    "profile": "Профиль",
+    "dashboard": "Панель управления",
+    "vacancies": "Вакансии",
+    "graduates": "Выпускники",
+    "employers": "Работодатели",
+    "logout": "Выход"
+  },
+  "auth": {
+    "login": "Вход",
+    "register": "Регистрация",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "forgotPassword": "Забыли пароль?",
+    "noAccount": "Нет аккаунта?",
+    "haveAccount": "Уже есть аккаунт?",
+    "role": "Я являюсь",
+    "graduate": "Выпускником",
+    "employer": "Работодателем"
+  },
+  "home": {
+    "heroTitle": "Отслеживайте свой карьерный путь",
+    "heroSubtitle": "Система учета трудоустройства выпускников Политехнического университета",
+    "statsTitle": "Наша статистика",
+    "employmentRate": "Уровень трудоустройства",
+    "totalGraduates": "Всего выпускников",
+    "partnerCompanies": "Компании-партнеры"
+  },
+  "graduate": {
+    "profile": "Мой профиль",
+    "resume": "Мое резюме",
+    "employmentStatus": "Статус занятости",
+    "employed": "Трудоустроен",
+    "unemployed": "Не трудоустроен",
+    "company": "Компания",
+    "position": "Должность",
+    "salary": "Зарплата",
+    "startDate": "Дата начала",
+    "uploadResume": "Загрузить резюме",
+    "updateProfile": "Обновить профиль"
+  },
+  "employer": {
+    "dashboard": "Панель управления",
+    "vacancies": "Мои вакансии",
+    "addVacancy": "Добавить вакансию",
+    "title": "Название должности",
+    "description": "Описание",
+    "requirements": "Требования",
+    "location": "Местоположение",
+    "salary": "Зарплата",
+    "applications": "Заявки",
+    "company": "Информация о компании"
+  },
+  "admin": {
+    "dashboard": "Панель администратора",
+    "graduatesManagement": "Управление выпускниками",
+    "employersManagement": "Управление работодателями",
+    "statistics": "Статистика",
+    "yearFilter": "Фильтр по году",
+    "exportData": "Экспорт данных",
+    "approveEmployers": "Одобрить работодателей"
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "view": "Просмотр",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "noResults": "Результаты не найдены",
+    "loading": "Загрузка...",
+    "success": "Успешно!",
+    "error": "Ошибка!",
+    "required": "Обязательное поле",
+    "invalidEmail": "Неверный адрес электронной почты"
+  }
+}
