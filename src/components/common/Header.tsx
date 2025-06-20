@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { GraduationCap, Menu, X, User, LogOut, Globe } from 'lucide-react';
+import { GraduationCap, Menu, X, LogOut, Globe } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -18,13 +18,8 @@ const Header: React.FC = () => {
     navigate('/');
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const toggleLanguageMenu = () => {
-    setLanguageMenuOpen(!languageMenuOpen);
-  };
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+  const toggleLanguageMenu = () => setLanguageMenuOpen(!languageMenuOpen);
 
   const changeLanguage = (lang: 'en' | 'ru' | 'kg') => {
     setLanguage(lang);
@@ -48,32 +43,30 @@ const Header: React.FC = () => {
             <Link to="/" className="text-gray-700 hover:text-primary-600 transition-colors">
               {t('nav.home')}
             </Link>
-            
+
             {user ? (
               <>
-                <Link 
-                  to={`/${user.role}/dashboard`} 
+                <Link
+                  to="/dashboard"
                   className="text-gray-700 hover:text-primary-600 transition-colors"
                 >
                   {t('nav.dashboard')}
                 </Link>
-                <div className="relative">
-                  <button 
-                    onClick={handleLogout}
-                    className="flex items-center text-gray-700 hover:text-primary-600 transition-colors"
-                  >
-                    <LogOut className="h-5 w-5 mr-1" />
-                    {t('nav.logout')}
-                  </button>
-                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center text-gray-700 hover:text-primary-600 transition-colors"
+                >
+                  <LogOut className="h-5 w-5 mr-1" />
+                  {t('nav.logout')}
+                </button>
               </>
             ) : (
               <>
                 <Link to="/login" className="text-gray-700 hover:text-primary-600 transition-colors">
                   {t('nav.login')}
                 </Link>
-                <Link 
-                  to="/register" 
+                <Link
+                  to="/register"
                   className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
                 >
                   {t('nav.register')}
@@ -83,7 +76,7 @@ const Header: React.FC = () => {
 
             {/* Language Selector */}
             <div className="relative">
-              <button 
+              <button
                 onClick={toggleLanguageMenu}
                 className="flex items-center text-gray-700 hover:text-primary-600 transition-colors"
               >
@@ -92,34 +85,24 @@ const Header: React.FC = () => {
               </button>
               {languageMenuOpen && (
                 <div className="absolute right-0 mt-2 w-24 bg-white rounded-md shadow-lg py-1 z-10">
-                  <button 
-                    onClick={() => changeLanguage('en')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${language === 'en' ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                  >
-                    English
-                  </button>
-                  <button 
-                    onClick={() => changeLanguage('ru')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${language === 'ru' ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                  >
-                    Русский
-                  </button>
-                  <button 
-                    onClick={() => changeLanguage('kg')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${language === 'kg' ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                  >
-                    Кыргызча
-                  </button>
+                  {['en', 'ru', 'kg'].map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => changeLanguage(lang as 'en' | 'ru' | 'kg')}
+                      className={`block px-4 py-2 text-sm w-full text-left ${
+                        language === lang ? 'bg-gray-100' : 'hover:bg-gray-100'
+                      }`}
+                    >
+                      {lang.toUpperCase()}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
           </nav>
 
           {/* Mobile menu button */}
-          <button 
-            onClick={toggleMobileMenu}
-            className="md:hidden text-gray-700"
-          >
+          <button onClick={toggleMobileMenu} className="md:hidden text-gray-700">
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -128,24 +111,24 @@ const Header: React.FC = () => {
         {mobileMenuOpen && (
           <nav className="md:hidden mt-4 py-3 border-t">
             <div className="flex flex-col space-y-4">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="text-gray-700 hover:text-primary-600 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('nav.home')}
               </Link>
-              
+
               {user ? (
                 <>
-                  <Link 
-                    to={`/${user.role}/dashboard`} 
+                  <Link
+                    to="/dashboard"
                     className="text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t('nav.dashboard')}
                   </Link>
-                  <button 
+                  <button
                     onClick={() => {
                       handleLogout();
                       setMobileMenuOpen(false);
@@ -158,15 +141,15 @@ const Header: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Link 
-                    to="/login" 
+                  <Link
+                    to="/login"
                     className="text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t('nav.login')}
                   </Link>
-                  <Link 
-                    to="/register" 
+                  <Link
+                    to="/register"
                     className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors inline-block"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -178,33 +161,20 @@ const Header: React.FC = () => {
               {/* Language options */}
               <div className="pt-2 border-t">
                 <div className="flex space-x-4">
-                  <button 
-                    onClick={() => {
-                      changeLanguage('en');
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`px-2 py-1 text-sm rounded ${language === 'en' ? 'bg-gray-200' : ''}`}
-                  >
-                    EN
-                  </button>
-                  <button 
-                    onClick={() => {
-                      changeLanguage('ru');
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`px-2 py-1 text-sm rounded ${language === 'ru' ? 'bg-gray-200' : ''}`}
-                  >
-                    RU
-                  </button>
-                  <button 
-                    onClick={() => {
-                      changeLanguage('kg');
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`px-2 py-1 text-sm rounded ${language === 'kg' ? 'bg-gray-200' : ''}`}
-                  >
-                    KG
-                  </button>
+                  {['en', 'ru', 'kg'].map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => {
+                        changeLanguage(lang as 'en' | 'ru' | 'kg');
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`px-2 py-1 text-sm rounded ${
+                        language === lang ? 'bg-gray-200' : ''
+                      }`}
+                    >
+                      {lang.toUpperCase()}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

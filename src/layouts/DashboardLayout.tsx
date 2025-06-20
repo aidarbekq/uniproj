@@ -10,17 +10,22 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role }) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  // Check if user is authenticated and has correct role
+  const roleMap = {
+    graduate: 'ALUMNI',
+    employer: 'EMPLOYER',
+    admin: 'ADMIN',
+  };
+
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== role)) {
+    if (!loading && (!user || user.role !== roleMap[role])) {
       navigate('/login');
     }
-  }, [isAuthenticated, isLoading, navigate, role, user?.role]);
+  }, [loading, navigate, role, user]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
