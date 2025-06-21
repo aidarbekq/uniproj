@@ -14,12 +14,17 @@ import RegisterPage from './pages/RegisterPage';
 import GraduateProfilePage from './pages/graduate/ProfilePage';
 import GraduateResumePage from './pages/graduate/ResumePage';
 import EmployerVacanciesPage from './pages/employer/VacanciesPage';
+import VacancyCreatePage from "./pages/employer/VacancyCreatePage";
+import VacancyEditPage from "./pages/employer/VacancyEditPage";
 import EmployerPage from './pages/employer/EmployerPage';
 import AdminDashboardPage from './pages/admin/DashboardPage';
 import AdminGraduatesPage from './pages/admin/GraduatesPage';
+import AdminGraduateDetailPage from './pages/admin/AdminGraduateDetailPage';
+import AdminEmployerDetailPage from './pages/admin/AdminEmployerDetailPage';
 import AdminEmployersPage from './pages/admin/EmployersPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DashboardRedirect from "@/pages/DashboardRedirect";
+
 
 function App() {
   return (
@@ -44,13 +49,18 @@ function App() {
           <Route path="/employer" element={<DashboardLayout role="employer" />}>
             <Route path="dashboard" element={<EmployerPage />} />
             <Route path="vacancies" element={<EmployerVacanciesPage />} />
+            <Route path="vacancies/create" element={<VacancyCreatePage />} />
+            <Route path="vacancies/:id/edit" element={<VacancyEditPage />} />
           </Route>
 
           {/* Admin routes */}
           <Route path="/admin" element={<DashboardLayout role="admin" />}>
             <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route path="graduates" element={<AdminGraduatesPage />} />
+            <Route path="graduates/:id" element={<AdminGraduateDetailPage />} />
             <Route path="employers" element={<AdminEmployersPage />} />
+            <Route path='employers/:id' element={<AdminEmployerDetailPage/>}/>
+
           </Route>
 
           {/* Not found */}
