@@ -91,45 +91,60 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         );
       
       case 'admin':
-        return (
-          <>
-            <Link 
-              to="/admin/dashboard" 
-              className={clsx(
-                "flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors",
-                isActive('/admin/dashboard') 
-                  ? "bg-primary-100 text-primary-700" 
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              <BarChart className="h-5 w-5" />
-              <span>{t('admin.dashboard')}</span>
-            </Link>
-            <Link 
-              to="/admin/graduates" 
-              className={clsx(
-                "flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors",
-                isActive('/admin/graduates') 
-                  ? "bg-primary-100 text-primary-700" 
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              <GraduationCap className="h-5 w-5" />
-              <span>{t('admin.graduatesManagement')}</span>
-            </Link>
-            <Link 
-              to="/admin/employers" 
-              className={clsx(
-                "flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors",
-                isActive('/admin/employers') 
-                  ? "bg-primary-100 text-primary-700" 
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-            >
-              <Building className="h-5 w-5" />
-              <span>{t('admin.employersManagement')}</span>
-            </Link>
-          </>
+  return (
+    <>
+      <Link 
+        to="/admin/dashboard" 
+        className={clsx(
+          "flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors",
+          isActive('/admin/dashboard') 
+            ? "bg-primary-100 text-primary-700" 
+            : "text-gray-600 hover:bg-gray-100"
+        )}
+      >
+        <BarChart className="h-5 w-5" />
+        <span>{t('admin.dashboard')}</span>
+      </Link>
+
+      <Link 
+        to="/admin/graduates" 
+        className={clsx(
+          "flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors",
+          isActive('/admin/graduates') 
+            ? "bg-primary-100 text-primary-700" 
+            : "text-gray-600 hover:bg-gray-100"
+        )}
+      >
+        <GraduationCap className="h-5 w-5" />
+        <span>{t('admin.graduatesManagement')}</span>
+      </Link>
+
+      <Link 
+        to="/admin/employers" 
+        className={clsx(
+          "flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors",
+          isActive('/admin/employers') 
+            ? "bg-primary-100 text-primary-700" 
+            : "text-gray-600 hover:bg-gray-100"
+        )}
+      >
+        <Building className="h-5 w-5" />
+        <span>{t('admin.employersManagement')}</span>
+      </Link>
+
+      <Link 
+        to="/admin/vacancies" 
+        className={clsx(
+          "flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors",
+          isActive('/admin/vacancies') 
+            ? "bg-primary-100 text-primary-700" 
+            : "text-gray-600 hover:bg-gray-100"
+        )}
+      >
+        <Briefcase className="h-5 w-5" />
+        <span>{t('admin.vacanciesManagement')}</span>
+      </Link>
+    </>
         );
       
       default:

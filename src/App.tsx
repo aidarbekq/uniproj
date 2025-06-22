@@ -22,6 +22,9 @@ import AdminGraduatesPage from './pages/admin/GraduatesPage';
 import AdminGraduateDetailPage from './pages/admin/AdminGraduateDetailPage';
 import AdminEmployerDetailPage from './pages/admin/AdminEmployerDetailPage';
 import AdminEmployersPage from './pages/admin/EmployersPage';
+import AdminVacanciesPage from './pages/admin/AdminVacanciesPage';
+import AdminVacancyDetailPage from './pages/admin/AdminVacancyDetailPage';
+import AdminVacancyEditPage from './pages/admin/AdminVacancyEditPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DashboardRedirect from "@/pages/DashboardRedirect";
 
@@ -60,7 +63,9 @@ function App() {
             <Route path="graduates/:id" element={<AdminGraduateDetailPage />} />
             <Route path="employers" element={<AdminEmployersPage />} />
             <Route path='employers/:id' element={<AdminEmployerDetailPage/>}/>
-
+            <Route path='vacancies' element={<AdminVacanciesPage/>}/>
+            <Route path='vacancies/:id' element={<AdminVacancyDetailPage/>}/>
+            <Route path="vacancies/:id/edit" element={<AdminVacancyEditPage />} />
           </Route>
 
           {/* Not found */}

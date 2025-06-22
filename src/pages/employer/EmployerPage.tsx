@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface UserInfo {
   id: number;
@@ -23,7 +24,6 @@ const EmployerPage: React.FC = () => {
   const [profile, setProfile] = useState<EmployerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     company_name: "",
     address: "",
@@ -38,16 +38,13 @@ const EmployerPage: React.FC = () => {
     const fetchMyProfile = async () => {
       try {
         const res = await api.get("employers/employers/");
-        console.log("🔵 EMPLOYERS FULL RESPONSE:", res.data);
-        console.log("🟢 CURRENT USER ID:", user?.id);
-
-        const my = res.data.find((p: EmployerProfile) => {
-          console.log("🔍 Checking user object:", p.user?.id, "vs", user?.id);
-          return p.user?.id === user?.id;
-        });
+        const my = res.data.find((p: EmployerProfile) =>
+          p.user?.id === user?.id
+        );
 
         if (!my) {
           setProfile(null);
+          toast.error("Профиль работодателя не найден");
           return;
         }
 
@@ -62,7 +59,8 @@ const EmployerPage: React.FC = () => {
           email: my.user.email || "",
         });
       } catch (error) {
-        console.error("❌ Ошибка загрузки профиля работодателя", error);
+        console.error("❌ Ошибка загрузки профиля", error);
+        toast.error("Ошибка загрузки профиля работодателя");
       } finally {
         setLoading(false);
       }
@@ -82,6 +80,7 @@ const EmployerPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile) return;
+
     try {
       await Promise.all([
         api.put("users/me/", {
@@ -96,11 +95,11 @@ const EmployerPage: React.FC = () => {
           description: formData.description,
         }),
       ]);
-      setSuccessMessage("✅ Профиль обновлён!");
-      setTimeout(() => setSuccessMessage(""), 4000);
+      toast.success("Профиль успешно обновлён");
       setIsEditing(false);
     } catch (error) {
       console.error("❌ Ошибка при сохранении", error);
+      toast.error("Не удалось обновить профиль");
     }
   };
 
@@ -119,20 +118,14 @@ const EmployerPage: React.FC = () => {
   };
 
   if (loading) return <p className="text-center mt-8">Загрузка...</p>;
-  if (!profile) return <p className="text-center mt-8 text-red-600">Профиль работодателя не найден</p>;
+  if (!profile) return <p className="text-center mt-8 text-red-600">Профиль не найден</p>;
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-      <h1 className="text-3xl font-bold mb-4 text-blue-800">Профиль работодателя</h1>
-
-      {successMessage && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-300 text-green-800 rounded-md text-sm shadow-sm">
-          {successMessage}
-        </div>
-      )}
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
+      <h1 className="text-3xl font-bold mb-6 text-blue-800">Профиль работодателя</h1>
 
       {!isEditing ? (
-        <div className="space-y-2 text-gray-800">
+        <div className="space-y-3 text-gray-800 text-base">
           <p><strong>Компания:</strong> {formData.company_name}</p>
           <p><strong>Адрес:</strong> {formData.address}</p>
           <p><strong>Телефон:</strong> {formData.phone}</p>
@@ -140,27 +133,84 @@ const EmployerPage: React.FC = () => {
           <p><strong>Имя:</strong> {formData.first_name}</p>
           <p><strong>Фамилия:</strong> {formData.last_name}</p>
           <p><strong>Email:</strong> {formData.email}</p>
-          <div className="mt-8 text-right">
+
+          <div className="pt-6 text-right">
             <button
-              className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
               onClick={() => setIsEditing(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
             >
               Редактировать
             </button>
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          <input name="company_name" value={formData.company_name} onChange={handleChange} placeholder="Компания" className="w-full border p-2 rounded" />
-          <input name="address" value={formData.address} onChange={handleChange} placeholder="Адрес" className="w-full border p-2 rounded" />
-          <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Телефон" className="w-full border p-2 rounded" />
-          <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Описание" className="w-full border p-2 rounded" rows={3} />
-          <input name="first_name" value={formData.first_name} onChange={handleChange} placeholder="Имя" className="w-full border p-2 rounded" />
-          <input name="last_name" value={formData.last_name} onChange={handleChange} placeholder="Фамилия" className="w-full border p-2 rounded" />
-          <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email" className="w-full border p-2 rounded" />
+        <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+          <input
+            name="company_name"
+            value={formData.company_name}
+            onChange={handleChange}
+            placeholder="Компания"
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+          <input
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Адрес"
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+          <input
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="Телефон"
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Описание"
+            className="w-full border border-gray-300 p-2 rounded"
+            rows={3}
+          />
+          <input
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleChange}
+            placeholder="Имя"
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+          <input
+            name="last_name"
+            value={formData.last_name}
+            onChange={handleChange}
+            placeholder="Фамилия"
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+          <input
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+
           <div className="flex gap-4 pt-2">
-            <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded-lg w-full">Сохранить</button>
-            <button type="button" onClick={handleCancel} className="bg-blue-100 text-blue-700 py-2 px-4 rounded-lg w-full">Отмена</button>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+            >
+              Сохранить
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded hover:bg-gray-200 transition"
+            >
+              Отмена
+            </button>
           </div>
         </form>
       )}

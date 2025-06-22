@@ -64,6 +64,7 @@
     "dashboard": "Панель администратора",
     "graduatesManagement": "Управление выпускниками",
     "employersManagement": "Управление работодателями",
+    "vacanciesManagement": "Вакансии",
     "statistics": "Статистика",
     "yearFilter": "Фильтр по году",
     "exportData": "Экспорт данных",

@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "@/services/api";
+import { toast } from "sonner";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/common/Card";
+import Button from "@/components/common/Button";
 
 const VacancyEditPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -12,8 +16,9 @@ const VacancyEditPage: React.FC = () => {
     location: "",
     salary: "",
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchVacancy = async () => {
@@ -27,93 +32,123 @@ const VacancyEditPage: React.FC = () => {
           salary: res.data.salary || "",
         });
       } catch (err) {
-        setError("Ошибка загрузки данных вакансии.");
+        console.error("Ошибка загрузки данных вакансии:", err);
+        toast.error("Ошибка загрузки данных вакансии.");
+      } finally {
+        setLoading(false);
       }
     };
-    fetchVacancy();
+    if (id) fetchVacancy();
   }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    if (!id) return;
 
+    setSubmitting(true);
     try {
       await api.put(`vacancies/vacancies/${id}/`, formData);
-      setSuccess("Изменения сохранены!");
-      setTimeout(() => navigate("/employer/vacancies"), 1500);
+      toast.success("Вакансия успешно обновлена!");
+      setTimeout(() => navigate("/employer/vacancies"), 1000);
     } catch (err) {
-      console.error(err);
-      setError("Ошибка при сохранении изменений.");
+      console.error("Ошибка при сохранении:", err);
+      toast.error("Ошибка при сохранении изменений.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  if (loading) return <p className="text-center mt-10 text-gray-600">Загрузка...</p>;
+
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-      <h2 className="text-2xl font-semibold mb-4">Редактирование вакансии</h2>
+    <div className="max-w-3xl mx-auto mt-10 space-y-6">
+      <h1 className="text-2xl font-bold text-gray-800">Редактирование вакансии</h1>
 
-      {success && <p className="text-green-600 font-medium mb-4">{success}</p>}
-      {error && <p className="text-red-500 font-medium mb-4">{error}</p>}
+      <Card>
+        <CardHeader>
+          <CardTitle>Обновите данные вакансии</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block mb-1 font-medium text-gray-700">Название должности *</label>
+              <input
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                placeholder="Например: Backend разработчик"
+              />
+            </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Название должности"
-          className="w-full border p-2 rounded"
-          required
-        />
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Описание"
-          className="w-full border p-2 rounded"
-          rows={3}
-          required
-        />
-        <textarea
-          name="requirements"
-          value={formData.requirements}
-          onChange={handleChange}
-          placeholder="Требования"
-          className="w-full border p-2 rounded"
-          rows={3}
-        />
-        <input
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          placeholder="Локация"
-          className="w-full border p-2 rounded"
-          required
-        />
+            <div>
+              <label className="block mb-1 font-medium text-gray-700">Описание *</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={4}
+                required
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                placeholder="Опишите обязанности, задачи и условия"
+              />
+            </div>
 
-        {/* 💲 Salary input with $ prefix */}
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-          <input
-            type="number"
-            name="salary"
-            value={formData.salary}
-            onChange={handleChange}
-            placeholder="Зарплата"
-            className="w-full border p-2 pl-7 rounded"
-          />
-        </div>
+            <div>
+              <label className="block mb-1 font-medium text-gray-700">Требования</label>
+              <textarea
+                name="requirements"
+                value={formData.requirements}
+                onChange={handleChange}
+                rows={3}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                placeholder="Требуемые навыки, опыт и т.п."
+              />
+            </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded w-full hover:bg-blue-700 transition"
-        >
-          Сохранить
-        </button>
-      </form>
+            <div>
+              <label className="block mb-1 font-medium text-gray-700">Локация *</label>
+              <input
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                placeholder="Город или Remote"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium text-gray-700">Зарплата</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <input
+                  type="number"
+                  name="salary"
+                  value={formData.salary}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-2 pl-7"
+                  placeholder="Например: 1200"
+                />
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Сохранение..." : "Сохранить изменения"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

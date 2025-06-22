@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import api from "@/services/api";
+import {
+  Briefcase, MapPin, Calendar, Pencil, Trash2, Plus, Search,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import api from "@/services/api";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/common/Card";
+import Button from "@/components/common/Button";
 
 interface Vacancy {
   id: number;
@@ -18,6 +22,7 @@ interface Vacancy {
 const VacanciesPage: React.FC = () => {
   const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -26,115 +31,138 @@ const VacanciesPage: React.FC = () => {
       try {
         const res = await api.get("vacancies/vacancies/");
         setVacancies(res.data);
-      } catch (error) {
-        console.error("Ошибка загрузки вакансий", error);
+      } catch (err) {
+        console.error("Ошибка загрузки вакансий", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchVacancies();
   }, []);
+
+  const filtered = vacancies.filter((v) =>
+    [v.title, v.location, v.employer].some((field) =>
+      field?.toLowerCase().includes(search.toLowerCase())
+    )
+  );
 
   const confirmDelete = async () => {
     if (deleteId === null) return;
     try {
       await api.delete(`vacancies/vacancies/${deleteId}/`);
       setVacancies((prev) => prev.filter((v) => v.id !== deleteId));
-    } catch (error) {
-      console.error("Ошибка удаления", error);
+    } catch (err) {
+      console.error("Ошибка удаления", err);
     } finally {
       setDeleteId(null);
     }
   };
 
-  if (loading) {
-    return <p className="text-center mt-8 text-gray-600">Загрузка...</p>;
-  }
-
   return (
-    <div className="p-6 relative">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Мои вакансии</h1>
-        <button
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-          onClick={() => navigate("/employer/vacancies/create")}
-        >
-          <Plus size={16} /> Добавить вакансию
-        </button>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold text-gray-800">Мои вакансии</h1>
+        <Button onClick={() => navigate("/employer/vacancies/create")}>
+          <Plus className="h-4 w-4 mr-1" /> Добавить вакансию
+        </Button>
       </div>
 
-      {vacancies.length === 0 ? (
-        <p className="text-gray-600">У вас пока нет опубликованных вакансий.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full border text-sm">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="border px-4 py-2">Компания</th>
-                <th className="border px-4 py-2">Должность</th>
-                <th className="border px-4 py-2">Описание</th>
-                <th className="border px-4 py-2">Требования</th>
-                <th className="border px-4 py-2">Локация</th>
-                <th className="border px-4 py-2">Зарплата</th>
-                <th className="border px-4 py-2">Дата</th>
-                <th className="border px-4 py-2 text-center">Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vacancies.map((v) => (
-                <tr key={v.id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{v.employer}</td>
-                  <td className="border px-4 py-2 font-semibold">{v.title}</td>
-                  <td className="border px-4 py-2">{v.description}</td>
-                  <td className="border px-4 py-2">{v.requirements || "-"}</td>
-                  <td className="border px-4 py-2">{v.location}</td>
-                  <td className="border px-4 py-2">
-                    {v.salary ? `$${parseFloat(v.salary).toLocaleString()}` : "-"}
-                  </td>
-                  <td className="border px-4 py-2">
-                    {new Date(v.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="border px-4 py-2 flex justify-center space-x-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>Список вакансий</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex mb-6">
+            <div className="relative w-full md:w-96">
+              <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Поиск по названию, локации или компании"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {filtered.map((v) => (
+              <div key={v.id} className="border border-gray-200 rounded-lg bg-white px-4 py-4 shadow-sm">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-gray-100 rounded-full">
+                      <Briefcase className="h-6 w-6 text-gray-700" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">{v.title}</h3>
+                      <p className="text-sm text-gray-500">{v.employer}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
                     <button
-                      className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition"
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
                       onClick={() => navigate(`/employer/vacancies/${v.id}/edit`)}
                     >
-                      <Pencil size={16} /> Изменить
+                      <Pencil className="h-4 w-4" /> Изменить
                     </button>
                     <button
-                      className="flex items-center gap-1 text-sm text-red-600 hover:text-red-800 transition"
+                      className="text-sm text-red-600 hover:text-red-800 flex items-center gap-1"
                       onClick={() => setDeleteId(v.id)}
                     >
-                      <Trash2 size={16} /> Удалить
+                      <Trash2 className="h-4 w-4" /> Удалить
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                  </div>
+                </div>
 
-      {/* Модальное окно подтверждения удаления */}
+                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                  <div>
+                    <h4 className="text-gray-900 font-medium mb-1">Локация</h4>
+                    <p className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-1 text-gray-500" />
+                      {v.location}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-gray-900 font-medium mb-1">Зарплата</h4>
+                    <p>${v.salary || "Не указано"}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-gray-900 font-medium mb-1">Опубликовано</h4>
+                    <p className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-1 text-gray-500" />
+                      {new Date(v.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-gray-900 font-medium mb-1">Описание</h4>
+                    <p className="line-clamp-3">{v.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {!filtered.length && (
+              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Вакансии не найдены</h3>
+                <p className="text-gray-500">Попробуйте изменить параметры поиска</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Модалка подтверждения удаления */}
       {deleteId !== null && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Удалить вакансию?</h3>
-            <p className="mb-6 text-gray-600">
-              Вы уверены, что хотите удалить эту вакансию? Это действие нельзя отменить.
-            </p>
+            <p className="mb-6 text-gray-600">Вы уверены, что хотите удалить эту вакансию?</p>
             <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setDeleteId(null)}
-                className="px-4 py-2 border rounded hover:bg-gray-100 transition"
-              >
+              <button onClick={() => setDeleteId(null)} className="px-4 py-2 border rounded hover:bg-gray-100">
                 Отмена
               </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-              >
+              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                 Удалить
               </button>
             </div>

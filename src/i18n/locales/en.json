@@ -64,6 +64,7 @@
     "dashboard": "Admin Dashboard",
     "graduatesManagement": "Graduates Management",
     "employersManagement": "Employers Management",
+    "vacanciesManagement": "Vacancies",
     "statistics": "Statistics",
     "yearFilter": "Filter by Year",
     "exportData": "Export Data",
