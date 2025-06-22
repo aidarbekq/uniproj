@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/services/api';
 import { Upload, File, Download, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const ResumePage: React.FC = () => {
   const { user } = useAuth();
@@ -56,12 +57,12 @@ const ResumePage: React.FC = () => {
       await api.put(`alumni/alumni-profiles/${profileId}/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Резюме успешно загружено");
+      toast.success("Резюме успешно загружено");
       setFile(null);
-      window.location.reload();
+      setResumeUrl(URL.createObjectURL(file)); // временное обновление
     } catch (err) {
       console.error("Ошибка при загрузке резюме", err);
-      setError("Не удалось загрузить файл");
+      toast.error(" Не удалось загрузить файл");
     } finally {
       setIsUploading(false);
     }
@@ -72,10 +73,11 @@ const ResumePage: React.FC = () => {
 
     try {
       await api.put(`alumni/alumni-profiles/${profileId}/`, { resume: null });
+      toast.success("Резюме удалено");
       setResumeUrl(null);
     } catch (err) {
       console.error("Ошибка при удалении", err);
-      setError("Ошибка при удалении резюме");
+      toast.error("Ошибка при удалении резюме");
     }
   };
 
