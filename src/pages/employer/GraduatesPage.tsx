@@ -3,8 +3,8 @@ import {
   GraduationCap, Search, BadgeCheck, Briefcase, XCircle,
   Calendar, FileText, Eye
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/common/Card";
 import Button from "@/components/common/Button";
 import api from "@/services/api";
@@ -26,14 +26,14 @@ interface Graduate {
   resume: string | null;
 }
 
-const AdminGraduatesPage: React.FC = () => {
+const EmployerGraduatesPage: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [graduates, setGraduates] = useState<Graduate[]>([]);
   const [search, setSearch] = useState("");
   const [yearFilter, setYearFilter] = useState("");
   const [employmentFilter, setEmploymentFilter] = useState("");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const fetchGraduates = async () => {
     setLoading(true);
@@ -47,7 +47,7 @@ const AdminGraduatesPage: React.FC = () => {
       const filtered = res.data.filter((g: Graduate) => g.user?.role === "ALUMNI");
       setGraduates(filtered);
     } catch (err) {
-      console.error("Ошибка при загрузке выпускников", err);
+      console.error("Failed to load graduates", err);
     } finally {
       setLoading(false);
     }
@@ -116,11 +116,12 @@ const AdminGraduatesPage: React.FC = () => {
                       <div className="text-sm text-gray-500">{g.specialty}</div>
                     </div>
                   </div>
+
                   <Button
                     size="sm"
                     variant="outline"
                     leftIcon={<Eye className="w-4 h-4" />}
-                    onClick={() => navigate(`/admin/graduates/${g.id}`)}
+                    onClick={() => navigate(`/employer/graduates/${g.id}`)}
                   >
                     {t("common.view")}
                   </Button>
@@ -148,10 +149,6 @@ const AdminGraduatesPage: React.FC = () => {
                       </>
                     )}
                   </div>
-                  <div className="flex items-center">
-                    <span className="text-gray-500 mr-1">{t("admin.employerId")}:</span>
-                    <span className="text-gray-900">{g.employer ?? "—"}</span>
-                  </div>
                   {g.resume && (
                     <a
                       href={g.resume}
@@ -166,9 +163,10 @@ const AdminGraduatesPage: React.FC = () => {
                 </div>
               </div>
             ))}
-
             {!graduates.length && !loading && (
-              <div className="text-center py-12 text-gray-500">{t("common.noResults")}</div>
+              <div className="text-center py-12 text-gray-500">
+                {t("common.noResults")}
+              </div>
             )}
           </div>
         </CardContent>
@@ -177,4 +175,4 @@ const AdminGraduatesPage: React.FC = () => {
   );
 };
 
-export default AdminGraduatesPage;
+export default EmployerGraduatesPage;

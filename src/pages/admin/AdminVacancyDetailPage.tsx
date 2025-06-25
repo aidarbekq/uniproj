@@ -1,9 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Briefcase, Calendar, MapPin, Pencil, Trash } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import {
+  Briefcase,
+  Calendar,
+  MapPin,
+  Pencil,
+  Trash,
+} from "lucide-react";
+
 import api from "@/services/api";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/common/Card";
 import Button from "@/components/common/Button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/common/Card";
 
 interface Vacancy {
   id: number;
@@ -23,6 +37,8 @@ interface Vacancy {
 const AdminVacancyDetailPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const [vacancy, setVacancy] = useState<Vacancy | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
@@ -33,23 +49,23 @@ const AdminVacancyDetailPage: React.FC = () => {
       try {
         const res = await api.get(`vacancies/vacancies/${id}/`);
         setVacancy(res.data);
-      } catch (err) {
-        console.error("Ошибка загрузки вакансии:", err);
+      } catch {
+        toast.error(t("vacancy.errorLoad"));
       } finally {
         setLoading(false);
       }
     };
     fetchVacancy();
-  }, [id]);
+  }, [id, t]);
 
   const handleDelete = async () => {
     try {
       setDeleting(true);
       await api.delete(`vacancies/vacancies/${id}/`);
+      toast.success(t("vacancy.successDelete"));
       navigate("/admin/vacancies");
-    } catch (err) {
-      console.error("Ошибка удаления:", err);
-      alert("Не удалось удалить вакансию.");
+    } catch {
+      toast.error(t("vacancy.errorDelete"));
     } finally {
       setDeleting(false);
       setShowConfirm(false);
@@ -57,89 +73,95 @@ const AdminVacancyDetailPage: React.FC = () => {
   };
 
   if (loading) {
-    return <p className="text-center mt-6">Загрузка...</p>;
+    return <p className="text-center mt-6 text-gray-500">{t("common.loading")}</p>;
   }
 
   if (!vacancy) {
-    return <p className="text-center mt-6 text-red-600">Вакансия не найдена</p>;
+    return <p className="text-center mt-6 text-red-600">{t("vacancy.errorLoad")}</p>;
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto relative">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-800">Вакансия: {vacancy.title}</h1>
-        <div className="flex gap-2">
+    <div className="space-y-6 max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
+          {t("vacancy.title")}: {vacancy.title}
+        </h1>
+        <div className="flex flex-wrap gap-2">
           <Button onClick={() => navigate(`/admin/vacancies/${vacancy.id}/edit`)}>
             <Pencil className="h-4 w-4 mr-1" />
-            Редактировать
+            {t("common.edit")}
           </Button>
           <Button variant="destructive" onClick={() => setShowConfirm(true)}>
             <Trash className="h-4 w-4 mr-1" />
-            Удалить
+            {t("common.delete")}
           </Button>
           <Button variant="outline" onClick={() => navigate("/admin/vacancies")}>
-            Назад
+            {t("common.cancel")}
           </Button>
         </div>
       </div>
 
+      {/* Vacancy Info */}
       <Card>
         <CardHeader>
-          <CardTitle>Информация о вакансии</CardTitle>
+          <CardTitle>{t("vacancy.editFormTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-gray-700 text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h4 className="text-gray-900 font-medium mb-1">Компания</h4>
+              <h4 className="text-gray-900 font-medium mb-1">{t("employer.company_name")}</h4>
               <p className="flex items-center">
                 <Briefcase className="h-4 w-4 mr-1 text-gray-500" />
                 {vacancy.employer?.company_name}
               </p>
             </div>
             <div>
-              <h4 className="text-gray-900 font-medium mb-1">Локация</h4>
+              <h4 className="text-gray-900 font-medium mb-1">{t("vacancy.location")}</h4>
               <p className="flex items-center">
                 <MapPin className="h-4 w-4 mr-1 text-gray-500" />
                 {vacancy.location}
               </p>
             </div>
             <div>
-              <h4 className="text-gray-900 font-medium mb-1">Зарплата</h4>
-              <p>${vacancy.salary || "Не указано"}</p>
+              <h4 className="text-gray-900 font-medium mb-1">{t("vacancy.salary")}</h4>
+              <p>${vacancy.salary || t("common.notSpecified")}</p>
             </div>
             <div>
-              <h4 className="text-gray-900 font-medium mb-1">Дата публикации</h4>
+              <h4 className="text-gray-900 font-medium mb-1">{t("vacancy.createdAt")}</h4>
               <p className="flex items-center">
                 <Calendar className="h-4 w-4 mr-1 text-gray-500" />
                 {new Date(vacancy.created_at).toLocaleDateString()}
               </p>
             </div>
           </div>
+
           <div>
-            <h4 className="text-gray-900 font-medium mb-1">Описание</h4>
+            <h4 className="text-gray-900 font-medium mb-1">{t("vacancy.description")}</h4>
             <p>{vacancy.description}</p>
           </div>
+
           <div>
-            <h4 className="text-gray-900 font-medium mb-1">Требования</h4>
+            <h4 className="text-gray-900 font-medium mb-1">{t("vacancy.requirements")}</h4>
             <p>{vacancy.requirements || "—"}</p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Модальное окно подтверждения удаления */}
+      {/* Confirm Delete Modal */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Подтвердите удаление</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t("common.confirmDelete")}</h2>
             <p className="text-gray-700">
-              Вы уверены, что хотите удалить вакансию <b>{vacancy.title}</b>? Это действие необратимо.
+              {t("vacancy.confirmDelete", { title: vacancy.title })}
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowConfirm(false)}>
-                Отмена
+                {t("common.cancel")}
               </Button>
               <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-                {deleting ? "Удаление..." : "Удалить"}
+                {deleting ? t("vacancy.updating") : t("common.delete")}
               </Button>
             </div>
           </div>

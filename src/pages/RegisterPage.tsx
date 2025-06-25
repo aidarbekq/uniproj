@@ -1,12 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { GraduationCap, Lock, Mail, User, Briefcase, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import {
+  GraduationCap,
+  Lock,
+  Mail,
+  User,
+  Briefcase,
+  Loader2,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/common/Card";
 import Button from "@/components/common/Button";
 import { motion } from "framer-motion";
 
 const RegisterPage: React.FC = () => {
+  const { t } = useTranslation();
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -35,7 +44,7 @@ const RegisterPage: React.FC = () => {
     setError("");
 
     if (formData.password !== formData.password2) {
-      setError("Пароли не совпадают.");
+      setError(t("auth.passwordMismatch"));
       return;
     }
 
@@ -46,7 +55,7 @@ const RegisterPage: React.FC = () => {
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      setError("Ошибка регистрации. Проверьте данные.");
+      setError(t("auth.registerError"));
     } finally {
       setIsLoading(false);
     }
@@ -64,8 +73,10 @@ const RegisterPage: React.FC = () => {
           <div className="inline-flex justify-center items-center mb-4">
             <GraduationCap className="h-12 w-12 text-primary-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Регистрация</h1>
-          <p className="mt-2 text-gray-600">Создайте свой аккаунт</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {t("auth.register")}
+          </h1>
+          <p className="mt-2 text-gray-600">{t("auth.registerSubtitle")}</p>
         </div>
 
         <Card className="animate-slide-up">
@@ -81,14 +92,14 @@ const RegisterPage: React.FC = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <input
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleChange}
-                    placeholder="Имя"
+                    placeholder={t("auth.firstName")}
                     required
                     className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                   />
@@ -99,7 +110,7 @@ const RegisterPage: React.FC = () => {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleChange}
-                    placeholder="Фамилия"
+                    placeholder={t("auth.lastName")}
                     required
                     className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                   />
@@ -112,7 +123,7 @@ const RegisterPage: React.FC = () => {
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  placeholder="Логин"
+                  placeholder={t("auth.username")}
                   required
                   className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                 />
@@ -125,7 +136,7 @@ const RegisterPage: React.FC = () => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="name@example.com"
+                  placeholder={t("auth.email")}
                   required
                   className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                 />
@@ -138,7 +149,7 @@ const RegisterPage: React.FC = () => {
                   type="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Пароль"
+                  placeholder={t("auth.password")}
                   required
                   className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                 />
@@ -151,7 +162,7 @@ const RegisterPage: React.FC = () => {
                   type="password"
                   value={formData.password2}
                   onChange={handleChange}
-                  placeholder="Повторите пароль"
+                  placeholder={t("auth.confirmPassword")}
                   required
                   className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                 />
@@ -159,7 +170,7 @@ const RegisterPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Роль
+                  {t("auth.role")}
                 </label>
                 <div className="mt-1 grid grid-cols-2 gap-3">
                   {["ALUMNI", "EMPLOYER"].map((r) => (
@@ -177,12 +188,12 @@ const RegisterPage: React.FC = () => {
                       {r === "ALUMNI" ? (
                         <>
                           <GraduationCap className="h-5 w-5 mr-2" />
-                          Выпускник
+                          {t("auth.graduate")}
                         </>
                       ) : (
                         <>
                           <Briefcase className="h-5 w-5 mr-2" />
-                          Работодатель
+                          {t("auth.employer")}
                         </>
                       )}
                     </motion.button>
@@ -199,19 +210,22 @@ const RegisterPage: React.FC = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Регистрируем...
+                    {t("auth.registering")}
                   </>
                 ) : (
-                  "Зарегистрироваться"
+                  t("auth.register")
                 )}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Уже есть аккаунт?{" "}
-                <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
-                  Войти
+                {t("auth.haveAccount")}{" "}
+                <Link
+                  to="/login"
+                  className="font-medium text-primary-600 hover:text-primary-500"
+                >
+                  {t("auth.login")}
                 </Link>
               </p>
             </div>

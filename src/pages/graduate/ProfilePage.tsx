@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import Button from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/common/Card";
+import { useTranslation } from "react-i18next";
 
 interface UserInfo {
   id: number;
@@ -28,6 +29,7 @@ interface Profile {
 
 const ProfilePage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -62,14 +64,14 @@ const ProfilePage: React.FC = () => {
           email: userInfo?.email || "",
         });
       } catch {
-        toast.error("Ошибка загрузки профиля");
+        toast.error(t("common.error"));
       } finally {
         setLoading(false);
       }
     };
 
     if (user) fetchProfile();
-  }, [user]);
+  }, [user, t]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -91,18 +93,16 @@ const ProfilePage: React.FC = () => {
           email: formData.email,
         }),
         api.patch(`alumni/alumni-profiles/${profile.id}/`, {
-          graduation_year: formData.graduation_year
-            ? Number(formData.graduation_year)
-            : null,
+          graduation_year: formData.graduation_year ? Number(formData.graduation_year) : null,
           specialty: formData.specialty || null,
           is_employed: formData.is_employed,
           position: formData.position || null,
         }),
       ]);
-      toast.success("Профиль успешно обновлён");
+      toast.success(t("common.success"));
       setIsEditing(false);
     } catch {
-      toast.error("Ошибка при обновлении профиля");
+      toast.error(t("common.error"));
     }
   };
 
@@ -121,44 +121,41 @@ const ProfilePage: React.FC = () => {
     setIsEditing(false);
   };
 
-  if (loading) return <p className="text-center mt-8">Загрузка...</p>;
-  if (!profile) return <p className="text-center mt-8 text-red-600">Профиль не найден</p>;
+  if (loading) return <p className="text-center mt-8">{t("common.loading")}</p>;
+  if (!profile) return <p className="text-center mt-8 text-red-600">{t("common.error")}</p>;
 
   return (
     <div className="max-w-2xl mx-auto mt-10 px-4">
       <Card>
         <CardHeader>
-          <CardTitle>Мой профиль</CardTitle>
+          <CardTitle>{t("graduate.profile")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {!isEditing ? (
             <div className="text-gray-800 text-base space-y-2">
-              <p><strong>Имя:</strong> {formData.first_name}</p>
-              <p><strong>Фамилия:</strong> {formData.last_name}</p>
-              <p><strong>Email:</strong> {formData.email}</p>
-              <p><strong>Год выпуска:</strong> {formData.graduation_year || "—"}</p>
-              <p><strong>Специальность:</strong> {formData.specialty || "—"}</p>
-              <p><strong>Трудоустроен:</strong> {formData.is_employed ? "Да" : "Нет"}</p>
-              <p><strong>Должность:</strong> {formData.position || "—"}</p>
+              <p><strong>{t("auth.firstName")}:</strong> {formData.first_name}</p>
+              <p><strong>{t("auth.lastName")}:</strong> {formData.last_name}</p>
+              <p><strong>{t("auth.email")}:</strong> {formData.email}</p>
+              <p><strong>{t("graduate.graduation_year")}:</strong> {formData.graduation_year || "—"}</p>
+              <p><strong>{t("graduate.specialty")}:</strong> {formData.specialty || "—"}</p>
+              <p><strong>{t("graduate.employmentStatus")}:</strong> {formData.is_employed ? t("graduate.employed") : t("graduate.unemployed")}</p>
+              <p><strong>{t("graduate.position")}:</strong> {formData.position || "—"}</p>
               <div className="pt-4 text-right">
-                <Button onClick={() => setIsEditing(true)}>Редактировать</Button>
+                <Button onClick={() => setIsEditing(true)}>{t("common.edit")}</Button>
               </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {[
-                { name: "first_name", label: "Имя" },
-                { name: "last_name", label: "Фамилия" },
-                { name: "email", label: "Email", type: "email" },
-                { name: "graduation_year", label: "Год выпуска", type: "number" },
-                { name: "specialty", label: "Специальность" },
-                { name: "position", label: "Должность" },
+                { name: "first_name", label: t("auth.firstName") },
+                { name: "last_name", label: t("auth.lastName") },
+                { name: "email", label: t("auth.email"), type: "email" },
+                { name: "graduation_year", label: t("graduate.graduation_year"), type: "number" },
+                { name: "specialty", label: t("graduate.specialty") },
+                { name: "position", label: t("graduate.position") },
               ].map(({ name, label, type = "text" }) => (
                 <div key={name}>
-                  <label
-                    htmlFor={name}
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
+                  <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
                     {label}
                   </label>
                   <Input
@@ -177,22 +174,16 @@ const ProfilePage: React.FC = () => {
                   checked={formData.is_employed}
                   onChange={handleChange}
                   className="w-4 h-4"
+                  id="is_employed"
                 />
                 <label htmlFor="is_employed" className="text-sm text-gray-700">
-                  Трудоустроен
+                  {t("graduate.employed")}
                 </label>
               </div>
-              <div className="flex gap-4 pt-2">
-                <Button type="submit" className="w-full">
-                  Сохранить
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCancel}
-                  className="w-full"
-                >
-                  Отмена
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <Button type="submit" className="w-full sm:w-auto">{t("common.save")}</Button>
+                <Button type="button" variant="outline" onClick={handleCancel} className="w-full sm:w-auto">
+                  {t("common.cancel")}
                 </Button>
               </div>
             </form>

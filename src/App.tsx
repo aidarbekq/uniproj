@@ -13,10 +13,13 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import GraduateProfilePage from './pages/graduate/ProfilePage';
 import GraduateResumePage from './pages/graduate/ResumePage';
+import GraduateVacanciesPage from './pages/graduate/VacanciesPage';
 import EmployerVacanciesPage from './pages/employer/VacanciesPage';
 import VacancyCreatePage from "./pages/employer/VacancyCreatePage";
 import VacancyEditPage from "./pages/employer/VacancyEditPage";
 import EmployerPage from './pages/employer/EmployerPage';
+import EmployerGraduatesPage from './pages/employer/GraduatesPage';
+import EmployerGraduateDetailPage from './pages/employer/GraduatesDetailPage';
 import AdminDashboardPage from './pages/admin/DashboardPage';
 import AdminGraduatesPage from './pages/admin/GraduatesPage';
 import AdminGraduateDetailPage from './pages/admin/AdminGraduateDetailPage';
@@ -27,6 +30,7 @@ import AdminVacancyDetailPage from './pages/admin/AdminVacancyDetailPage';
 import AdminVacancyEditPage from './pages/admin/AdminVacancyEditPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DashboardRedirect from "@/pages/DashboardRedirect";
+import GraduateVacancyDetailPage from './pages/graduate/VacanciesDetailPage';
 
 
 function App() {
@@ -46,11 +50,15 @@ function App() {
           <Route path="/graduate" element={<DashboardLayout role="graduate" />}>
             <Route path="profile" element={<GraduateProfilePage />} />
             <Route path="resume" element={<GraduateResumePage />} />
+            <Route path="vacancies" element={<GraduateVacanciesPage />} />
+            <Route path="vacancies/:id" element={<GraduateVacancyDetailPage />} />
           </Route>
 
           {/* Employer routes */}
           <Route path="/employer" element={<DashboardLayout role="employer" />}>
             <Route path="dashboard" element={<EmployerPage />} />
+            <Route path="graduates" element={<EmployerGraduatesPage />} />
+            <Route path="graduates/:id" element={<EmployerGraduateDetailPage/>} />
             <Route path="vacancies" element={<EmployerVacanciesPage />} />
             <Route path="vacancies/create" element={<VacancyCreatePage />} />
             <Route path="vacancies/:id/edit" element={<VacancyEditPage />} />

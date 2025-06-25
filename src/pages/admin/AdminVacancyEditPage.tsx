@@ -4,10 +4,12 @@ import api from "@/services/api";
 import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/common/Card";
 import Button from "@/components/common/Button";
+import { useTranslation } from "react-i18next";
 
 const AdminVacancyEditPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
@@ -30,14 +32,14 @@ const AdminVacancyEditPage: React.FC = () => {
           salary: res.data.salary || "",
           is_active: res.data.is_active,
         });
-      } catch (err) {
-        toast.error("Ошибка при загрузке вакансии");
+      } catch {
+        toast.error(t("vacancy.errorLoad"));
       } finally {
         setLoading(false);
       }
     };
     fetchVacancy();
-  }, [id]);
+  }, [id, t]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -53,84 +55,73 @@ const AdminVacancyEditPage: React.FC = () => {
     e.preventDefault();
     try {
       await api.put(`vacancies/vacancies/${id}/`, formData);
-      toast.success("Вакансия обновлена!");
+      toast.success(t("vacancy.successUpdate"));
       navigate("/admin/vacancies");
     } catch (err) {
-      toast.error("Ошибка при сохранении");
-      console.error(err);
+      toast.error(t("vacancy.errorUpdate"));
     }
   };
 
   if (loading) {
     return (
       <div className="flex justify-center mt-20">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-800">Редактирование вакансии</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
+          {t("vacancy.editHeading")}
+        </h1>
         <Button variant="outline" onClick={() => navigate("/admin/vacancies")}>
-          Назад
+          {t("common.cancel")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Форма редактирования</CardTitle>
+          <CardTitle>{t("vacancy.editFormTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium mb-1">Название</label>
-              <input
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                required
-              />
-            </div>
+            {[
+              ["title", t("vacancy.title")],
+              ["location", t("vacancy.location")],
+            ].map(([key, label]) => (
+              <div key={key}>
+                <label className="block text-sm font-medium mb-1">{label}</label>
+                <input
+                  name={key}
+                  value={(formData as any)[key]}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            ))}
+
+            {[
+              ["description", t("vacancy.description"), 4],
+              ["requirements", t("vacancy.requirements"), 3],
+            ].map(([key, label, rows]) => (
+              <div key={key}>
+                <label className="block text-sm font-medium mb-1">{label}</label>
+                <textarea
+                  name={key}
+                  value={(formData as any)[key]}
+                  onChange={handleChange}
+                  rows={rows as number}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required={key === "description"}
+                />
+              </div>
+            ))}
 
             <div>
-              <label className="block text-sm font-medium mb-1">Описание</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows={4}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Требования</label>
-              <textarea
-                name="requirements"
-                value={formData.requirements}
-                onChange={handleChange}
-                rows={3}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Локация</label>
-              <input
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Зарплата</label>
+              <label className="block text-sm font-medium mb-1">{t("vacancy.salary")}</label>
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-gray-400">$</span>
                 <input
@@ -151,11 +142,11 @@ const AdminVacancyEditPage: React.FC = () => {
                 onChange={handleChange}
                 className="accent-blue-600"
               />
-              <span>Вакансия активна</span>
+              <span>{t("vacancy.active")}</span>
             </label>
 
             <Button type="submit" className="w-full">
-              Сохранить изменения
+              {t("vacancy.updateVacancy")}
             </Button>
           </form>
         </CardContent>

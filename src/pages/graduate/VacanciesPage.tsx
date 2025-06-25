@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Briefcase, Calendar, CheckCircle, XCircle,
   Search, MapPin, Eye
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/common/Card";
 import api from "@/services/api";
 import Button from "@/components/common/Button";
@@ -18,12 +18,11 @@ interface Vacancy {
   is_active: boolean;
   created_at: string;
   employer: {
-    id: number;
     company_name: string;
   };
 }
 
-const AdminVacanciesPage: React.FC = () => {
+const GraduateVacanciesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -34,17 +33,15 @@ const AdminVacanciesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVacancies = async () => {
+    const fetch = async () => {
       try {
         const res = await api.get("vacancies/vacancies/");
         setVacancies(res.data);
-      } catch (err) {
-        console.error("Error loading vacancies", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchVacancies();
+    fetch();
   }, []);
 
   const filtered = vacancies.filter((v) => {
@@ -67,7 +64,7 @@ const AdminVacanciesPage: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("admin.vacancies")}</CardTitle>
+          <CardTitle>{t("vacancy.vacanciesList")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-6">
@@ -78,7 +75,7 @@ const AdminVacanciesPage: React.FC = () => {
                 placeholder={t("common.search")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="pl-9 pr-4 py-2 w-full border border-gray-300 rounded-md"
               />
             </div>
 
@@ -87,7 +84,7 @@ const AdminVacanciesPage: React.FC = () => {
               value={isActiveFilter}
               onChange={(e) => setIsActiveFilter(e.target.value as any)}
             >
-              <option value="">{t("common.filter")} - {t("admin.vacancies")}</option>
+              <option value="">{t("common.filter")} - {t("vacancy.status")}</option>
               <option value="true">{t("vacancy.active")}</option>
               <option value="false">{t("vacancy.inactive")}</option>
             </select>
@@ -109,11 +106,9 @@ const AdminVacanciesPage: React.FC = () => {
                 key={v.id}
                 className="border border-gray-200 rounded-lg bg-white px-4 py-4 shadow-sm"
               >
-                <div className="flex flex-col md:flex-row justify-between gap-4">
+                <div className="flex justify-between flex-col md:flex-row gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-100 rounded-full">
-                      <Briefcase className="h-6 w-6 text-gray-700" />
-                    </div>
+                    <Briefcase className="h-6 w-6 text-gray-700" />
                     <div>
                       <h3 className="font-medium text-gray-900">{v.title}</h3>
                       <p className="text-sm text-gray-500">{v.employer?.company_name}</p>
@@ -144,7 +139,7 @@ const AdminVacanciesPage: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => navigate(`/admin/vacancies/${v.id}`)}
+                      onClick={() => navigate(`/graduate/vacancies/${v.id}`)}
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       {t("common.view")}
@@ -178,19 +173,19 @@ const AdminVacanciesPage: React.FC = () => {
                 </div>
               </div>
             ))}
-
-            {!sorted.length && (
-              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{t("vacancy.noResults")}</h3>
-                <p className="text-gray-500">{t("common.tryAdjustingFilters")}</p>
-              </div>
-            )}
           </div>
+
+          {!sorted.length && (
+            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+              <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t("vacancy.noResults")}</h3>
+              <p className="text-gray-500">{t("common.tryAdjustingFilters")}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 };
 
-export default AdminVacanciesPage;
+export default GraduateVacanciesPage;

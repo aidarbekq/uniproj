@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+// src/components/layout/Header.tsx
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { GraduationCap, Menu, X, LogOut, Globe } from 'lucide-react';
 
 const Header: React.FC = () => {
@@ -10,8 +11,10 @@ const Header: React.FC = () => {
   const { language, setLanguage } = useLanguage();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
@@ -22,20 +25,37 @@ const Header: React.FC = () => {
   const toggleLanguageMenu = () => setLanguageMenuOpen(!languageMenuOpen);
 
   const changeLanguage = (lang: 'en' | 'ru' | 'kg') => {
-    setLanguage(lang);
+    if (lang !== language) {
+      setLanguage(lang);
+    }
     setLanguageMenuOpen(false);
   };
 
+  // Close language menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setLanguageMenuOpen(false);
+      }
+    };
+    if (languageMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [languageMenuOpen]);
+
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-white shadow-sm z-50 relative">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <GraduationCap className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-semibold text-primary-700">
-              {t('app.name')}
-            </span>
+            <span className="text-xl font-semibold text-primary-700">{t('app.name')}</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -75,7 +95,7 @@ const Header: React.FC = () => {
             )}
 
             {/* Language Selector */}
-            <div className="relative">
+            <div className="relative" ref={langMenuRef}>
               <button
                 onClick={toggleLanguageMenu}
                 className="flex items-center text-gray-700 hover:text-primary-600 transition-colors"
@@ -84,7 +104,7 @@ const Header: React.FC = () => {
                 {language.toUpperCase()}
               </button>
               {languageMenuOpen && (
-                <div className="absolute right-0 mt-2 w-24 bg-white rounded-md shadow-lg py-1 z-10">
+                <div className="absolute right-0 mt-2 w-24 bg-white rounded-md shadow-lg py-1 z-50">
                   {['en', 'ru', 'kg'].map((lang) => (
                     <button
                       key={lang}
@@ -102,14 +122,14 @@ const Header: React.FC = () => {
           </nav>
 
           {/* Mobile menu button */}
-          <button onClick={toggleMobileMenu} className="md:hidden text-gray-700">
+          <button onClick={toggleMobileMenu} className="md:hidden text-gray-700 z-50">
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden mt-4 py-3 border-t">
+          <nav className="md:hidden mt-4 py-3 border-t z-40 relative">
             <div className="flex flex-col space-y-4">
               <Link
                 to="/"

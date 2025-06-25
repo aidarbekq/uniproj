@@ -5,7 +5,7 @@ import { GraduationCap, Mail, Phone, MapPin } from 'lucide-react';
 const Footer: React.FC = () => {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
-  
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -16,20 +16,20 @@ const Footer: React.FC = () => {
               <GraduationCap className="h-8 w-8 text-primary-400" />
               <span className="text-xl font-semibold text-white">{t('app.name')}</span>
             </div>
-            <p className="text-gray-400 mb-4">
-              {t('app.tagline')}
-            </p>
+            <p className="text-gray-400 mb-4">{t('app.tagline')}</p>
           </div>
-          
+
           {/* Contact information */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-700 pb-2">
-              {t('Contact Us')}
+              {t('footer.Contact Us')}
             </h3>
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-primary-400 mr-3 mt-0.5" />
-                <span className="text-gray-400">Polytechnic University, Bishkek, Kyrgyzstan</span>
+                <span className="text-gray-400">
+                  Polytechnic University, Bishkek, Kyrgyzstan
+                </span>
               </li>
               <li className="flex items-center">
                 <Phone className="h-5 w-5 text-primary-400 mr-3" />
@@ -41,45 +41,47 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-          
+
           {/* Quick links */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-700 pb-2">
-              {t('Quick Links')}
+              {t('footer.Quick Links')}
             </h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
-                  {t('About University')}
+                  {t('footer.About University')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
-                  {t('Career Center')}
+                  {t('footer.Career Center')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
-                  {t('Academic Programs')}
+                  {t('footer.Academic Programs')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
-                  {t('Privacy Policy')}
+                  {t('footer.Privacy Policy')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
-                  {t('Terms of Service')}
+                  {t('footer.Terms of Service')}
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        
+
         {/* Copyright */}
         <div className="border-t border-gray-800 mt-12 pt-6 text-center text-gray-400">
-          <p>© {currentYear} {t('app.name')} - {t('All Rights Reserved')}</p>
+          <p>
+            © {currentYear} {t('app.name')} - {t('footer.All Rights Reserved')}
+          </p>
         </div>
       </div>
     </footer>
